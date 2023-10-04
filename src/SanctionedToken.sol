@@ -1,11 +1,6 @@
-/**
- * TODO: Add versioned imports
- * TODO: Create unit tests
- */
-
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.21;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
@@ -65,7 +60,6 @@ contract SanctionedToken is ERC20, Ownable2Step {
 
     /**
      * @dev Override OpenZeppelin's _beforeTokenTransfer hook to implement the sanctions functionality.
-     * This hook is called on `transfer`.
      * @param from Sender of the tokens.
      * @param to Receiver of the tokens.
      * @param amount Amount of tokens being transferred.

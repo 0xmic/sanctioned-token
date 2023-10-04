@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity 0.8.21;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
@@ -27,6 +27,10 @@ contract SanctionsTest is StdCheats, Test {
         sanctionedToken.transfer(bob, BOB_STARTING_AMOUNT);
     }
 
+    function test_Owner() public {
+        assertEq(sanctionedToken.owner(), deployerAddress);
+    }
+
     function test_InitialSupply() public {
         assertEq(sanctionedToken.totalSupply(), deployer.INITIAL_SUPPLY());
     }
@@ -47,6 +51,22 @@ contract SanctionsTest is StdCheats, Test {
         sanctionedToken.unbanAddress(bob);
         vm.stopPrank();
         assertEq(sanctionedToken.isBanned(bob), false);
+    }
+
+    function test_BannedSenderTransferReverts() public {
+        vm.prank(deployerAddress);
+        sanctionedToken.banAddress(bob);
+        vm.expectRevert("Token transfer from banned address denied");
+        vm.prank(bob);
+        sanctionedToken.transfer(alice, 1 ether);
+    }
+
+    function test_BannedReceiverTransferReverts() public {
+        vm.prank(deployerAddress);
+        sanctionedToken.banAddress(alice);
+        vm.expectRevert("Token transfer to banned address denied");
+        vm.prank(bob);
+        sanctionedToken.transfer(alice, 1 ether);
     }
 
     // TODO: Add tests for events, isBanned(), fail cases
